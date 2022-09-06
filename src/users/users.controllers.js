@@ -1,6 +1,15 @@
 const uuid = require("uuid");
 const { hashPassword } = require("../utils/crypt");
 
+//? Importación del modelo
+const Users = require('../models/user.model');
+const UserImages = require("../models/userImages.model");
+const Roles = require("../models/role.model");
+const Reservations = require("../models/reservations.model");
+const Places = require("../models/places.model");
+const Accommodations = require("../models/accommodations.model");
+const AccommodationImages = require("../models/accommodationImages.model");
+
 const userDB = [{
   "id": "74cd6011-7e76-4d6d-b25b-1d6e4182ec2f",
   "first_name": "Sahid",
@@ -16,33 +25,44 @@ const userDB = [{
   "verified": false
 }];
 
-const getAllUsers = () => {
-  return userDB;
+const getAllUsers = async () => {
+  const data = await Users.findAll({
+    attributes:{
+      exclude: ['password']
+    }
+  })
+  const data2 = await UserImages.findAll()
+  const data3 = await Roles.findAll()
+  const data4 = await Reservations.findAll()
+  const data5 = await Places.findAll()
+  const data6 = await Accommodations.findAll()
+  const data7 = await AccommodationImages.findAll()
+  return data;
   //? select * from users;
 };
 
-const getUserById = (id) => {
-  const data = userDB.filter((item) => item.id === id);
-  return data.length ? data[0] : false
+const getUserById = async (id) => {
+  const data = await Users.findOne({
+    where: {
+      id: id
+    },
+    attributes: {
+      exclude: ['password']
+    }
+  });
+  return data;
   //? select * from users where id = ${id};
 };
 
 const createUser = (data) => {
-  const newUser = {
-    id: uuid.v4(), //obligatorio y unico
-    first_name: data.first_name, //obligatorio
-    last_name: data.last_name, //obligatorio
-    email: data.email, //obligatorio y unico
-    password: hashPassword(data.password), //obligatorio
-    phone: data.phone ? data.phone : "", //unico
-    birthday_date: data.birthday_date, //obligatorio
-    rol: "normal", //obligatorio y por defecto "normal"
-    profile_image: data.profile_image ? data.profile_image : "",
-    country: data.country, //obligatorio
-    is_active: true, //obligatorio y por defecto true
-    verified: false, //obligatorio y por defecto false
-  };
-  userDB.push(newUser);
+  const newUser = Users.create({
+    ...data,
+    id: uuid.v4(),
+    password: hashPassword(data.password),
+    rol: "normal",
+    is_active: true,
+    verified: false,
+  })
   return newUser;
 };
 
@@ -69,14 +89,13 @@ const editUser = (id, data) => {
   }
 };
 
-const deleteUser = (id) => {
-  const index = userDB.findIndex(user => user.id === id)
-  if (index !== -1) {
-    userDB.splice(index, 1)
-    return true
-  } else {
-    return false
-  } 
+const deleteUser = async (id) => {
+  const data = await Users.destroy({
+    where: {
+      id: id
+    }
+  })
+  return data
 }
 
 const getUserByEmail = (email) => {

@@ -1,19 +1,25 @@
 const userControllers = require("./users.controllers");
 
 const getAll = (req, res) => {
-  const data = userControllers.getAllUsers();
-  res.status(200).json({ items: data.length, users: data });
+  userControllers.getAllUsers()
+    .then((data) => {
+      res.status(200).json({ items: data.length, users: data });
+    })
+    .catch(err => {
+      res.status(400).json(err)
+    })
 };
 
 const getById = (req, res) => {
   const id = req.params.id;
-  const data = userControllers.getUserById(id);
+  userControllers.getUserById(id)
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch(err => {
+      res.status(400).json({message: `Doesn't exist user with id ${id}`})
+    })
 
-  if (data) {
-    res.status(200).json(data);
-  } else {
-    res.status(404).json({ message: `El usuario con el id ${id} no existe` });
-  }
 };
 /*
 {
@@ -70,25 +76,32 @@ const register = (req, res) => {
       },
     });
   } else {
-    const response = userControllers.createUser(data);
-    return res
-      .status(201)
-      .json({
-        message: `User created succesfully with id: ${response.id}`,
-        user: response,
-      });
+    userControllers.createUser(data)
+      .then(response => {
+        res.status(201).json({
+            message: `User created succesfully with id: ${response.id}`,
+            user: response,
+        })
+      })
+      .catch(err => {
+        res.status(400).json({err})
+      })
   }
 };
 
 const remove = (req, res) => {
   const id = req.params.id;
-  const data = userControllers.deleteUser(id);
-
-  if (data) {
-    return res.status(204).json();
-  } else {
-    return res.status(400).json({ message: "Invalid ID" });
-  }
+  userControllers.deleteUser(id)
+    .then(response => {
+      if(response) {
+        res.status(204).json();
+      }else {
+        res.status(400).json({message: `Invalid Id`})
+      }
+    })
+    .catch(err => {
+      res.status(400).json(err)
+    })
 };
 
 const edit = (req, res) => {
@@ -167,10 +180,27 @@ const editMyUser = (req, res) => {
   }
 }
 
+const getMyUser = (req, res) => {
+  const id = req.user.id;
+  const data = userControllers.getUserById(id);
 
+  if (data) {
+    res.status(200).json(data);
+  } else {
+    res.status(404).json({ message: `El usuario con el id ${id} no existe` });
+  }
+}
 
+const removeMyUser = (req, res) => {
+  const id = req.user.id;
+  const data = userControllers.deleteUser(id);
 
-
+  if (data) {
+    return res.status(204).json();
+  } else {
+    return res.status(400).json({ message: "Invalid ID" });
+  }
+}
 
 module.exports = {
   getAll,
@@ -178,5 +208,7 @@ module.exports = {
   register,
   remove,
   edit,
-  editMyUser
+  editMyUser,
+  getMyUser,
+  removeMyUser
 };

@@ -10,6 +10,8 @@ router.route('/') //* /api/v1/users/
 
 router.route('/me')
     .put(passport.authenticate('jwt',{session: false}) ,userServices.editMyUser)
+    .get(passport.authenticate('jwt',{session: false}) ,userServices.getMyUser)
+    .delete(passport.authenticate('jwt',{session: false}) ,userServices.removeMyUser)
 
 router.route('/:id')
     .get(userServices.getById)
