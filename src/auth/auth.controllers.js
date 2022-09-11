@@ -1,8 +1,8 @@
 const {getUserByEmail} = require('../users/users.controllers')
 const { comparePassword } = require('../utils/crypt')
 
-const loginUser = (email, password) => {
-    const user = getUserByEmail(email)
+const loginUser = async (email, password) => {
+    const user = await getUserByEmail(email)
     //? user.password Contraseña hasheada
     //* password Contraseña en texto plano
     if(user){

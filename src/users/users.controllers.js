@@ -2,56 +2,27 @@ const uuid = require("uuid");
 const { hashPassword } = require("../utils/crypt");
 
 //? Importación del modelo
-const Users = require('../models/user.model');
-const UserImages = require("../models/userImages.model");
-const Roles = require("../models/role.model");
-const Reservations = require("../models/reservations.model");
-const Places = require("../models/places.model");
-const Accommodations = require("../models/accommodations.model");
-const AccommodationImages = require("../models/accommodationImages.model");
-
-const userDB = [{
-  "id": "74cd6011-7e76-4d6d-b25b-1d6e4182ec2f",
-  "first_name": "Sahid",
-  "last_name": "Kick",
-  "email": "sahid.kick@academlo.com",
-  "password": "$2b$10$TNGcRFonQH98rVqFaBVfpOEEv2Xcu5ej14tWqKim3z3L6Tr.ZIaqC",
-  "phone": "1234567890",
-  "birthday_date": "22/10/2000",
-  "rol": "normal",
-  "profile_image": "",
-  "country": "mexico",
-  "is_active": true,
-  "verified": false
-}];
+const Users = require("../models/user.model");
 
 const getAllUsers = async () => {
   const data = await Users.findAll({
-    attributes:{
-      exclude: ['password']
-    }
-  })
-  const data2 = await UserImages.findAll()
-  const data3 = await Roles.findAll()
-  const data4 = await Reservations.findAll()
-  const data5 = await Places.findAll()
-  const data6 = await Accommodations.findAll()
-  const data7 = await AccommodationImages.findAll()
+    attributes: {
+      exclude: ["password"],
+    },
+  });
   return data;
-  //? select * from users;
 };
 
 const getUserById = async (id) => {
   const data = await Users.findOne({
     where: {
-      id: id
+      id: id,
     },
     attributes: {
-      exclude: ['password']
-    }
+      exclude: ["password"],
+    },
   });
   return data;
-  //? select * from users where id = ${id};
 };
 
 const createUser = (data) => {
@@ -59,51 +30,46 @@ const createUser = (data) => {
     ...data,
     id: uuid.v4(),
     password: hashPassword(data.password),
-    rol: "normal",
-    is_active: true,
-    verified: false,
-  })
+    roleId: "normal",
+  });
   return newUser;
 };
 
-const editUser = (id, data) => {
-  const index = userDB.findIndex((user) => user.id === id);
-  if (index !== -1) {
-    userDB[index] = {
-      id: id,
-      first_name: data.first_name,
-      last_name: data.last_name,
-      email: data.email,
-      password: userDB[index].password,
-      phone: data.phone, //unico
-      birthday_date: data.birthday_date,
-      rol: data.rol,
-      profile_image: data.profile_image,
-      country: data.country,
-      is_active: data.is_active,
-      verified: false,
-    };
-    return userDB[index];
+const editUser = async (userId, data, userRol) => {
+  if (userRol === "5ee551ed-7bf4-44b0-aeb5-daaa824b9473") {
+    const { id, password, ...newData } = data;
+    const response = await Users.update(
+      { ...newData, },
+      { where: { id: userId }, }
+    );
+    return response;
   } else {
-    return createUser(data);
+    const { id, password, roleId, ...newData } = data;
+    const response = await Users.update(
+      { ...newData },
+      { where: { id: userId, } }
+    );
+    return response;
   }
 };
 
 const deleteUser = async (id) => {
   const data = await Users.destroy({
     where: {
-      id: id
-    }
-  })
-  return data
-}
+      id: id,
+    },
+  });
+  return data;
+};
 
-const getUserByEmail = (email) => {
-  const data = userDB.filter((item) => item.email === email);
-  return data.length ? data[0] : false
-  //? select * from users where email = ${email};
-}
-
+const getUserByEmail = async (email) => {
+  const data = await Users.findOne({
+    where: {
+      email,
+    },
+  });
+  return data;
+};
 
 module.exports = {
   createUser,
@@ -111,6 +77,5 @@ module.exports = {
   getUserById,
   editUser,
   deleteUser,
-  getUserByEmail
-}
-
+  getUserByEmail,
+};

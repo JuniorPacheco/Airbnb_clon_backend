@@ -29,10 +29,8 @@ const Users = db.define("users", {
     type: DataTypes.STRING,
   },
   phone: {
+    allowNull: false,
     type: DataTypes.STRING,
-    validate: {
-      min: 10,
-    },
   },
   dni: {
     type: DataTypes.STRING,
@@ -40,18 +38,20 @@ const Users = db.define("users", {
   address: {
     type: DataTypes.STRING,
   },
-  birthday_date: {
+  birthdayDate: {
     allowNull: false,
     type: DataTypes.DATEONLY,
+    field: "birthday_date",
   },
-  role: {
+  roleId: {
     allowNull: false,
     type: DataTypes.UUID,
+    field: "role_id",
   },
-  state: {
+  status: {
     allowNull: false,
     type: DataTypes.STRING,
-    defaultValue: "active",
+    defaultValue: "active", //active, non-active, deleted, suspended
   },
   verified: {
     allowNull: false,

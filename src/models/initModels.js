@@ -10,8 +10,8 @@ const initModels = () => {
   //? Relaciones de los modelos
 
   //? 1aN
-  Users.hasOne(Roles);
-  Roles.belongsToMany(Users);
+  Roles.hasMany(Users);
+  Users.belongsTo(Roles);
 
   //? 1aN
   Users.hasMany(UserImages);
@@ -19,7 +19,7 @@ const initModels = () => {
 
   //? NaN
   Users.belongsToMany(Accommodations, { through: Reservations });
-  Accommodations.belongsToMany(Accommodations, { through: Reservations });
+  Accommodations.belongsToMany(Users, { through: Reservations });
 
   //? 1aN
   Accommodations.hasMany(AccommodationImages);
@@ -28,6 +28,10 @@ const initModels = () => {
   //? 1aN
   Places.hasMany(Accommodations);
   Accommodations.belongsTo(Places);
+
+  //? 1aN
+  Users.hasMany(Accommodations);
+  Accommodations.belongsTo(Users);
 };
 
 module.exports = initModels;
