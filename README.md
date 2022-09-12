@@ -55,23 +55,23 @@
 
 1. Ver los lugares
 2. puede ver la informacion de un lugar
-3. reservar
+3. Reservar
 4. Dar un score una vez finalizada la reservacion
 5. Crear lugares
 6. Cancelar reservaciones en los lugares donde es host
 7. Puede ver perfiles de usuario
 8. Puede ver todos los lugares que le pertenecen
-9. editar el lugar
+9. Editar el lugar
 10. Eliminar el lugar
 
 ### Admin
 
 1. Ver los lugares
 2. puede ver la informacion de un lugar
-3. reservar
+3. Reservar
 4. Dar un score una vez finalizada la reservacion
 5. Puede ver perfiles de usuario
-6. editar el lugar
+6. Editar el lugar
 7. Eliminar el lugar
 8. Modificar roles
 9. Eliminar un usuario

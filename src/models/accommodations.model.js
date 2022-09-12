@@ -30,7 +30,7 @@ const Accommodations = db.define("accommodations", {
   },
   bathrooms: {
     allowNull: false,
-    type: DataTypes.DECIMAL,
+    type: DataTypes.FLOAT,
   },
   price: {
     allowNull: false,
@@ -44,11 +44,12 @@ const Accommodations = db.define("accommodations", {
   score: {
     allowNull: false,
     type: DataTypes.FLOAT,
+    defaultValue: 0.0,
   },
-  placesId: {
+  placeId: {
     allowNull: false,
     type: DataTypes.UUID,
-    field: 'place_id'
+    field: "place_id",
   },
   commision: {
     allowNull: false,

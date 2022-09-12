@@ -1,13 +1,13 @@
 const Roles = require("../models/role.model");
 
 const roleAdminMiddleware = async (req, res, next) => {
-  const rolId = req.user.dataValues.roleId;
+  const roleId = req.user.roleId;
   const adminRole = await Roles.findOne({
     where: {
       name: "admin",
     },
   });
-  if (adminRole.dataValues.id === rolId) {
+  if (adminRole.dataValues.id === roleId) {
     next();
   } else {
     res.status(401).json({
@@ -18,14 +18,14 @@ const roleAdminMiddleware = async (req, res, next) => {
 };
 
 const roleGuestMiddleware = async (req, res, next) => {
-  const rolId = req.user.dataValues.roleId;
+  const roleId = req.user.roleId;
   const adminRole = await Roles.findOne({
     where: {
-      name: "admin",
+      name: "guest",
     },
   });
 
-  if (adminRole.dataValues.id === rolId) {
+  if (adminRole.dataValues.id === roleId) {
     next();
   } else {
     res.status(401).json({
@@ -36,13 +36,14 @@ const roleGuestMiddleware = async (req, res, next) => {
 };
 
 const roleHostMiddleware = async (req, res, next) => {
-  const rolId = req.user.dataValues.roleId;
+  const roleId = req.user.roleId;
   const adminRole = await Roles.findOne({
     where: {
-      name: "admin",
+      name: "host",
     },
   });
-  if (adminRole.dataValues.id === rolId) {
+  console.log(roleId, adminRole.dataValues.id, "Estos son los datos");
+  if (adminRole.dataValues.id === roleId) {
     next();
   } else {
     res.status(401).json({
@@ -52,8 +53,28 @@ const roleHostMiddleware = async (req, res, next) => {
   }
 };
 
+const roleHostOrAdmin = async (req, res, next) => {
+  const roleId = req.user.roleId;
+  const rolesData = await Roles.findAll({
+    where: {
+      name: ["host", "admin"],
+    },
+  });
+  if (
+    rolesData[0].dataValues.id === roleId ||
+    rolesData[1].dataValues.id === roleId
+  ) {
+    return next();
+  } else {
+    return res
+      .status(401)
+      .json({ message: "You do not have permissions for this action" });
+  }
+};
+
 module.exports = {
   roleAdminMiddleware,
   roleGuestMiddleware,
   roleHostMiddleware,
+  roleHostOrAdmin
 };

@@ -1,6 +1,7 @@
 const Users = require("../models/user.model");
 const Roles = require("../models/role.model");
 const Places = require("../models/places.model");
+const Accommodations = require("../models/accommodations.model");
 
 const generateData = async () => {
   await Roles.bulkCreate(
@@ -21,10 +22,10 @@ const generateData = async () => {
     password: "$2b$10$EXB34AWjYZkbb6WLhfEome074/c/JzhL0/mon/sffXmJDc4qkq1PW", //1234
     phone: "",
     dni: "1234567891",
-    roleId: "5ee551ed-7bf4-44b0-aeb5-daaa824b9473",
+    roleId: "fef3a08d-2cec-4728-9745-7cbd2b37e557",
     profileImg: "",
     status: "active",
-    verified: false
+    verified: false,
   });
 
   await Users.create({
@@ -42,8 +43,8 @@ const generateData = async () => {
     roleId: "5ee551ed-7bf4-44b0-aeb5-daaa824b9473",
     profileImage: "asd.com",
     status: "active",
-    verified: false
-  })
+    verified: false,
+  });
 
   await Places.bulkCreate([
     {
@@ -89,6 +90,32 @@ const generateData = async () => {
       continent: "America",
     },
   ]);
+
+  await Accommodations.create({
+    id: "7e5fc196-8f45-46d2-bb2b-2f8b95340d50",
+    title: "premium - vistas 360 ciudad (alberca y gym)",
+    description: "asd",
+    guests: 6,
+    rooms: 3,
+    beds: 3,
+    bathrooms: 4.5,
+    price: 1536.0,
+    hostId: "74cd6011-7e76-4d6d-b25b-1d6e4182ec2f",
+    placeId: "9c0412b6-7d56-4347-8fbe-5455e8a42438",
+    commision: 150.0,
+  });
 };
+
+const dataTest = async() => {
+  const response = await Accommodations.update(
+    {price: 1700},
+    {where : {
+      id: "7e5fc196-8f45-46d2-bb2b-2f8b95340d50"
+    }}
+  )
+  console.log(response)
+}
+
+dataTest()
 
 exports.generateData = generateData;

@@ -26,12 +26,12 @@ const initModels = () => {
   AccommodationImages.belongsTo(Accommodations);
 
   //? 1aN
-  Places.hasMany(Accommodations);
-  Accommodations.belongsTo(Places);
+  Places.hasMany(Accommodations, {foreignKey: "place_id", sourceKey: "id"});
+  Accommodations.belongsTo(Places, {foreignKey: "place_id", targetKey: "id"});
 
   //? 1aN
-  Users.hasMany(Accommodations);
-  Accommodations.belongsTo(Users);
+  Users.hasMany(Accommodations, {foreignKey: "host_id", sourceKey: "id"});
+  Accommodations.belongsTo(Users, {foreignKey: "host_id", targetKey: "id"});
 };
 
 module.exports = initModels;

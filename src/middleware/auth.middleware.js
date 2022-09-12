@@ -13,12 +13,12 @@ module.exports = (passport) => {
       try {
         const user = await usersControllers.getUserById(decoded.id);
         if (user) {
-          return done(null, user);
+          return done(null, decoded);
         } else {
           return done(null, false);
         }
       } catch (error) {
-        return done(err, false);
+        return done(error, false);
       }
     })
   );
