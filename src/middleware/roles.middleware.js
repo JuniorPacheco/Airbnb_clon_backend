@@ -7,7 +7,7 @@ const roleAdminMiddleware = async (req, res, next) => {
       name: "admin",
     },
   });
-  if (adminRole.dataValues.id === roleId) {
+  if (adminRole.dataValues?.id === roleId) {
     next();
   } else {
     res.status(401).json({
@@ -25,7 +25,7 @@ const roleGuestMiddleware = async (req, res, next) => {
     },
   });
 
-  if (adminRole.dataValues.id === roleId) {
+  if (adminRole.dataValues?.id === roleId) {
     next();
   } else {
     res.status(401).json({
@@ -42,8 +42,8 @@ const roleHostMiddleware = async (req, res, next) => {
       name: "host",
     },
   });
-  console.log(roleId, adminRole.dataValues.id, "Estos son los datos");
-  if (adminRole.dataValues.id === roleId) {
+  
+  if (adminRole.dataValues?.id === roleId) {
     next();
   } else {
     res.status(401).json({
@@ -61,8 +61,27 @@ const roleHostOrAdmin = async (req, res, next) => {
     },
   });
   if (
-    rolesData[0].dataValues.id === roleId ||
-    rolesData[1].dataValues.id === roleId
+    rolesData[0].dataValues?.id === roleId ||
+    rolesData[1].dataValues?.id === roleId
+  ) {
+    return next();
+  } else {
+    return res
+      .status(401)
+      .json({ message: "You do not have permissions for this action" });
+  }
+};
+
+const roleHostOrGuest = async (req, res, next) => {
+  const roleId = req.user.roleId;
+  const rolesData = await Roles.findAll({
+    where: {
+      name: ["host", "guest"],
+    },
+  });
+  if (
+    rolesData[0].dataValues?.id === roleId ||
+    rolesData[1].dataValues?.id === roleId
   ) {
     return next();
   } else {
@@ -76,5 +95,6 @@ module.exports = {
   roleAdminMiddleware,
   roleGuestMiddleware,
   roleHostMiddleware,
-  roleHostOrAdmin
+  roleHostOrAdmin,
+  roleHostOrGuest
 };

@@ -1,6 +1,9 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Deferrable } = require("sequelize");
 
 const { db } = require("../utils/database");
+
+const Users = require("./user.model");
+const Accommodations = require("./accommodations.model");
 
 const Reservations = db.define("reservations", {
   id: {
@@ -12,6 +15,10 @@ const Reservations = db.define("reservations", {
     allowNull: false,
     type: DataTypes.UUID,
     field: "user_id",
+    references: {
+      model: Users,
+      key: "id",
+    },
   },
   arrival: {
     allowNull: false,
@@ -25,6 +32,10 @@ const Reservations = db.define("reservations", {
     allowNull: false,
     type: DataTypes.UUID,
     field: "accommodation_id",
+    references: {
+      model: Accommodations,
+      key: "id",
+    },
   },
   adults: {
     allowNull: false,
@@ -46,7 +57,8 @@ const Reservations = db.define("reservations", {
     defaultValue: 0,
   },
   score: {
-    type: DataTypes.DECIMAL,
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
   },
   isFinished: {
     type: DataTypes.BOOLEAN,

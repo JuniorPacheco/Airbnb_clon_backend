@@ -3,6 +3,7 @@ const Places = require("../models/places.model");
 const Users = require("../models/user.model");
 
 const uuid = require("uuid");
+const Roles = require("../models/role.model");
 
 const getAllAccommodations = async () => {
   const data = await Accommodations.findAll({
@@ -17,7 +18,7 @@ const getAllAccommodations = async () => {
         model: Users,
         as: "user",
         attributes: {
-          exclude: ["createdAt", "updatedAt"],
+          exclude: ["createdAt", "updatedAt", "password"],
         },
       },
     ],
@@ -62,25 +63,57 @@ const createAccommodation = async (data, hostId) => {
   return newAccommodation;
 };
 
-const editAccommodation = async (data, accommodationId, userId) => {
-  const { id, hostId, score, ...restOfData } = data;
-  console.log(restOfData, accommodationId, userId);
-  const response = await Accommodations.update(
-    { ...restOfData },
-    { where: { id: accommodationId, hostId: userId } }
-  );
+const editAccommodation = async (data, accommodationId, userId, roleId) => {
+  const dataRoles = await Roles.findAll({ where: { name: ["admin", "host"] } });
+  const rolesObeject = {};
 
-  //! Retorna un arreglo con un número el cual son las cantidad de elementos o rows 
+  dataRoles.forEach((role) => {
+    rolesObeject[role.dataValues.name] = role.dataValues.id;
+  });
+
+  if (roleId === rolesObeject["admin"]) {
+    const { id, hostId, score, ...restOfData } = data;
+    const response = await Accommodations.update(
+      { ...restOfData },
+      { where: { id: accommodationId} }
+    );
+    return response;
+  }
+
+  if (roleId === rolesObeject["host"]) {
+    const { id, hostId, score, ...restOfData } = data;
+    const response = await Accommodations.update(
+      { ...restOfData },
+      { where: { id: accommodationId, hostId: userId } }
+    );
+    return response;
+  }
+
+  //! Retorna un arreglo con un número el cual son las cantidad de elementos o rows
   //! que actualizo si es solo una fila la actualizada entonces retorna 1 y si no actualiza nada entonces retorna 0.
-
-  return response;
 };
 
-const removeAccommodation = async (accommodationId) => {
-  const response = await Accommodations.destroy({
-    where: { id: accommodationId },
+const removeAccommodation = async (accommodationId, roleId, userId) => {
+  const dataRoles = await Roles.findAll({ where: { name: ["admin", "host"] } });
+  const rolesObeject = {};
+  
+  dataRoles.forEach((role) => {
+    rolesObeject[role.dataValues.name] = role.dataValues.id;
   });
-  return response;
+
+  if (roleId === rolesObeject["admin"]) {
+    const response = await Accommodations.destroy({
+      where: { id: accommodationId },
+    });
+    return response;
+  }
+
+  if (roleId === rolesObeject["host"]) {
+    const response = await Accommodations.destroy({
+      where: { id: accommodationId, hostId: userId },
+    });
+    return response;
+  }
 };
 
 module.exports = {

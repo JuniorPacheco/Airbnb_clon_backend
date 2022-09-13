@@ -74,6 +74,7 @@ const edit = (req, res) => {
   const data = req.body;
   const accommodationId = req.params.id;
   const userId = req.user.id;
+  const roleId = req.user.roleId
 
   if (!Object.keys(data).length) {
     return res.status(400).json({
@@ -93,7 +94,7 @@ const edit = (req, res) => {
     });
   } else {
     accommodationControllers
-      .editAccommodation(data, accommodationId, userId)
+      .editAccommodation(data, accommodationId, userId, roleId)
       .then((response) => {
         if (response[0]) {
           return res.status(200).json({
@@ -111,8 +112,10 @@ const edit = (req, res) => {
 
 const remove = (req, res) => {
   const accommodationId = req.params.id;
+  const roleId = req.user.roleId
+  const userId = req.user.id;
   accommodationControllers
-    .removeAccommodation(accommodationId)
+    .removeAccommodation(accommodationId, roleId, userId)
     .then((response) => {
       if (response) {
         res.status(204).json();
@@ -124,6 +127,8 @@ const remove = (req, res) => {
       res.status(400).json(err);
     });
 };
+
+
 
 module.exports = {
   getAll,

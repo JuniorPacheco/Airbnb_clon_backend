@@ -1,7 +1,7 @@
 const router = require('express').Router()
 
 const passport = require('passport')
-const { roleHostMiddleware, roleHostOrAdmin } = require('../middleware/roles.middleware')
+const { roleHostMiddleware, roleHostOrAdmin, roleAdminMiddleware } = require('../middleware/roles.middleware')
 require('../middleware/auth.middleware')(passport)
 const accommodationServices = require('./accommodations.http')
 
@@ -12,7 +12,7 @@ router.route('/')
 router.route('/:id')
     .get(accommodationServices.getById)
     .put(passport.authenticate('jwt',{session: false}), roleHostOrAdmin, accommodationServices.edit)
-    .delete(accommodationServices.remove)
+    .delete(passport.authenticate('jwt',{session: false}), roleHostOrAdmin, accommodationServices.remove)
 
 module.exports= {
     router

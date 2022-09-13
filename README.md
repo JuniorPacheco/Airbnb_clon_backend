@@ -96,5 +96,17 @@
 /:id/available/?arrival=value&departure=value
 - GET 
 
+/api/v1/reservations/
+- GET (Admin) Obtener todas las reservaciones
+- POST (Admin, host, guest) hacer una reservacion
+
+/api/v1/reservations/:id
+- GET (Admin, host y guest) El admin puede obtener cualquier reservacion y los otros dos solo pueden obtener reservacion si son los creadores de ella
+- PUT (host y guest) Pueden editar el score solo si ellos hicieron la reserva
+- DELETE (host y guest) Pueden eliminar la reservacion pero solo sera un cambio en isCanceled a true, igual quedara en el historial
+
+/api/v1/reservations/me
+- GET (Guest, host y admin) Obtiene todas las reservaciones de la persona logeada
+
 # Ejemplo de documentacion 
 https://petstore.swagger.io/v2/swagger.json
