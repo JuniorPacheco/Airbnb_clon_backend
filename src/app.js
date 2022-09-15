@@ -1,9 +1,6 @@
 //* Dependencias
 const express = require("express");
 const swaggerUI = require("swagger-ui-express");
-const dotenv = require("dotenv");
-
-dotenv.config({ path: './.env' });
 
 //*Archivos de rutas
 const userRouter = require("./users/users.router").router;
@@ -20,24 +17,22 @@ const swaggerDoc = require("./swagger.json")
 const { db } = require("./utils/database");
 const app = express();
 
+const PORT = process.env.PORT || 8000;
+
 initModels();
 
 db.authenticate()
   .then(() => console.log("DataBase Authenticated"))
   .catch((err) => console.log(err));
 
-db.sync({ force: false })
+db.sync({ force: true })
   .then(() => {
-    // generateData();
+    generateData();
   })
   .catch((err) => console.log(err));
 
 //? Esta configuracion es para habilitar el req.body
 app.use(express.json());
-
-app.get("/", async (req, res) => {
-  res.status(200).json({ message: "All ok!" });
-});
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
@@ -47,7 +42,7 @@ app.use("/api/v1/places", placesRouter);
 
 app.use("/api/v1/doc", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 
-app.listen(process.env.PORT, () => {
+app.listen(PORT, () => {
   console.log("Server started !!!");
 });
 
