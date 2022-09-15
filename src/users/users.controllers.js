@@ -35,22 +35,22 @@ const createUser = (data) => {
   return newUser;
 };
 
-const editUser = async (userId, data, userRol) => {
-  if (userRol === "5ee551ed-7bf4-44b0-aeb5-daaa824b9473") {
-    const { id, password, ...newData } = data;
-    const response = await Users.update(
-      { ...newData, },
-      { where: { id: userId }, }
-    );
-    return response;
-  } else {
-    const { id, password, roleId, ...newData } = data;
-    const response = await Users.update(
-      { ...newData },
-      { where: { id: userId, } }
-    );
-    return response;
-  }
+const editUser = async (userId, data) => {
+  const { id, password, ...newData } = data;
+  const response = await Users.update(
+    { ...newData },
+    { where: { id: userId } }
+  );
+  return response;
+};
+
+const editMyUser = async (userId, data) => {
+  const { id, password, roleId, ...newData } = data;
+  const response = await Users.update(
+    { ...newData },
+    { where: { id: userId } }
+  );
+  return response;
 };
 
 const deleteUser = async (id) => {
@@ -78,4 +78,5 @@ module.exports = {
   editUser,
   deleteUser,
   getUserByEmail,
+  editMyUser,
 };

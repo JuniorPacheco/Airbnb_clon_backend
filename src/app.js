@@ -1,15 +1,20 @@
 //* Dependencias
 const express = require("express");
-const passport = require("passport");
+const swaggerUI = require("swagger-ui-express");
+const dotenv = require("dotenv");
+
+dotenv.config({ path: './.env' });
 
 //*Archivos de rutas
 const userRouter = require("./users/users.router").router;
 const authRouter = require("./auth/auth.router").router;
 const accommodationsRouter = require("./accommodations/accommodations.router").router;
 const reservationsRouter = require("./reservations/reservations.router").router;
+const placesRouter = require("./places/places.router").router;
 
 const initModels = require("./models/initModels");
 const { generateData } = require("./utils/initDataDB");
+const swaggerDoc = require("./swagger.json")
 
 //* Configuraciones iniciales
 const { db } = require("./utils/database");
@@ -23,8 +28,7 @@ db.authenticate()
 
 db.sync({ force: false })
   .then(() => {
-    console.log("Database Synced");
-    // generateData();
+    generateData();
   })
   .catch((err) => console.log(err));
 
@@ -39,9 +43,12 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/accommodations", accommodationsRouter);
 app.use("/api/v1/reservations", reservationsRouter);
+app.use("/api/v1/places", placesRouter);
 
-app.listen(8000, () => {
-  console.log("Server started at port 8000");
+app.use("/api/v1/doc", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
+
+app.listen(process.env.PORT, () => {
+  console.log("Server started !!!");
 });
 
 module.exports = app

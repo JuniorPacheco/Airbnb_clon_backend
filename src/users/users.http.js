@@ -79,46 +79,8 @@ const remove = (req, res) => {
 
 const edit = (req, res) => {
   const id = req.params.id;
-  const roleId = req.user.dataValues.roleId;
   const data = req.body;
-  if (!Object.keys(data).length) {
-    return res.status(400).json({
-      message: "At least one field must be filled",
-      fields: {
-        first_name: "string",
-        last_name: "string",
-        email: "examle@examle.com",
-        phone: "+521231231230",
-        rol: "normal",
-        profile_image: "example.com/img/example.png",
-        birthday_date: "DD/MM/YYYY",
-        country: "string",
-        is_active: true,
-      },
-    });
-  } else {
-    userControllers
-      .editUser(id, data, roleId)
-      .then((response) => {
-        if (response[0]) {
-          return res.status(200).json({
-            message: `User edited succesfully with id ${id}`,
-          });
-        } else {
-          return res.status(404).json({ message: "Invalid id" });
-        }
-      })
-      .catch((err) => {
-        res.status(400).json({ message: err });
-      });
-  }
-};
-
-const editMyUser = (req, res) => {
-  const id = req.user.id;
-  const idJWT = req.user.id;
-  console.log(idJWT);
-  const data = req.body;
+  
   if (!Object.keys(data).length) {
     return res.status(400).json({
       message: "At least one field must be filled",
@@ -137,6 +99,43 @@ const editMyUser = (req, res) => {
   } else {
     userControllers
       .editUser(id, data)
+      .then((response) => {
+        if (response[0]) {
+          return res.status(200).json({
+            message: `User edited succesfully with id ${id}`,
+          });
+        } else {
+          return res.status(404).json({ message: "Invalid id" });
+        }
+      })
+      .catch((err) => {
+        res.status(400).json({ message: err });
+      });
+  }
+};
+
+const editMyUser = (req, res) => {
+  const id = req.user.id;
+
+  const data = req.body;
+  if (!Object.keys(data).length) {
+    return res.status(400).json({
+      message: "At least one field must be filled",
+      fields: {
+        first_name: "string",
+        last_name: "string",
+        email: "examle@examle.com",
+        phone: "+521231231230",
+        rol: "normal",
+        profile_image: "example.com/img/example.png",
+        birthday_date: "DD/MM/YYYY",
+        country: "string",
+        is_active: true,
+      },
+    });
+  } else {
+    userControllers
+      .editMyUser(id, data, dataRoles)
       .then((response) => {
         if (response[0]) {
           return res.status(200).json({

@@ -43,17 +43,61 @@ describe("Suite de test de reservations", () => {
   it("Should return 201 when created a reservation with guest role", (done) => {
     chai
       .request(app)
-      .post("/api/v1/reservations")
+      .post("/api/v1/accommodations/7e5fc196-8f45-46d2-bb2b-2f8b95340d50/make-reservation")
       .set("Authorization", `JWT ${JWT_GUEST_ROLE}`)
       .send({
         arrival: "2022-09-12 09:08:13.756 -0500",
         departure: "2022-10-12 09:08:13.756 -0500",
-        accommodationId: "7e5fc196-8f45-46d2-bb2b-2f8b95340d50",
         adults: 2,
       })
       .end((err, res) => {
         chai.assert.equal(res.status, 201);
-        console.log(err, "soy el error")
+        done();
+      });
+  });
+
+  it("Should return status 400 when try to remove a reservation with invalid id", (done) => {
+    chai
+      .request(app)
+      .delete("/api/v1/reservations/7e5fc196-8f45-46d2-bb2b-2f8b95340d50")
+      .set("Authorization", `JWT ${JWT_GUEST_ROLE}`)
+      .end((err, res) => {
+        chai.assert.equal(res.status, 400);
+        done();
+      });
+  });
+
+  it("Should return status 200 when try to get all reservations with admin role and get an array on body response", (done) => {
+    chai
+      .request(app)
+      .get("/api/v1/reservations")
+      .set("Authorization", `JWT ${JWT_ADMIN_ROLE}`)
+      .end((err, res) => {
+        chai.assert.equal(res.status, 200);
+        chai.assert.isArray(res.body)
+        done();
+      });
+  });
+
+  it("Should return status 400 when try to edit a reservation with missing information", (done) => {
+    chai
+      .request(app)
+      .put("/api/v1/reservations/062f9817-5149-4236-bed8-6f4c62a604d3")
+      .set("Authorization", `JWT ${JWT_GUEST_ROLE}`)
+      .end((err, res) => {
+        chai.assert.equal(res.status, 400);
+        done();
+      });
+  });
+
+  it("Should return status 400 when try to edit a reservation with and the reservation don't have the property isFinished to true", (done) => {
+    chai
+      .request(app)
+      .put("/api/v1/reservations/062f9817-5149-4236-bed8-6f4c62a604d3")
+      .set("Authorization", `JWT ${JWT_GUEST_ROLE}`)
+      .send({price: 5})
+      .end((err, res) => {
+        chai.assert.equal(res.status, 400);
         done();
       });
   });

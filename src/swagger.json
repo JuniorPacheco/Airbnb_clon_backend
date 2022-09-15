@@ -1,0 +1,60 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Rest clon airbnb",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/users": {
+            "get": {
+                "description": "Obtener todos los usuarios",
+                "tags": ["Users", "v1"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente todos los usuarios"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la peticion no se resuelva"
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Este es el usuario que se quiere obtener",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "JWT, you can get a token if you login with a valid credentials",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "description": "Obtenemos un usuario",
+                "tags": ["Users", "v1"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente el usuario con el id pasado en el parametro"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la peticion no se resuelva"
+                    },
+                    "401": {
+                        "description": "Unauthorized, you need to be have a valid JWT for use this endpoint"
+                    }
+                }
+            }
+        }
+    }
+}

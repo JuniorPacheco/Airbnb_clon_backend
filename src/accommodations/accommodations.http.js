@@ -11,10 +11,11 @@ const getAll = (req, res) => {
     });
 };
 
-const getById = (req, res) => {
-  const accommodationId = req.params.id;
+const getAllMine = (req, res) => {
+  const userId = req.user.id;
+
   accommodationControllers
-    .getAccommodationById(accommodationId)
+    .getAllMyAccommodations(userId)
     .then((response) => {
       res.status(200).json(response);
     })
@@ -23,21 +24,51 @@ const getById = (req, res) => {
     });
 };
 
+const getAllByUserId = (req, res) => {
+  const userId = req.params.id;
+
+  accommodationControllers
+    .getAllAcommodationsByUserId(userId)
+    .then((response) => {
+      res.status(200).json(response);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+};
+
+const getById = (req, res) => {
+  const accommodationId = req.params.id;
+
+  accommodationControllers
+    .getAccommodationById(accommodationId)
+    .then((response) => {
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.status(400).json({ message: "Invalid id" });
+      }
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+};
+
 const create = (req, res) => {
   const data = req.body;
-  const hostId = req.user.id
+  const hostId = req.user.id;
+  const placeId = req.params.id;
+
   if (!data) {
     return res.status(400).json({ message: "Missing Data" });
   } else if (
-    !data.title || 
+    !data.title ||
     !data.description ||
     !data.guests ||
     !data.rooms ||
     !data.beds ||
     !data.bathrooms ||
     !data.price ||
-    !data.hostId ||
-    !data.placeId ||
     !data.commision
   ) {
     return res.status(400).json({
@@ -50,14 +81,12 @@ const create = (req, res) => {
         beds: "number int",
         bathrooms: "number",
         price: "number",
-        hostId: "uuid",
-        placeId: "uuid",
         commision: "number",
       },
     });
   } else {
     accommodationControllers
-      .createAccommodation(data, hostId)
+      .createAccommodation(data, hostId, placeId)
       .then((response) => {
         res.status(201).json({
           message: `Accommodation created succesfully with id: ${response.id}`,
@@ -74,7 +103,7 @@ const edit = (req, res) => {
   const data = req.body;
   const accommodationId = req.params.id;
   const userId = req.user.id;
-  const roleId = req.user.roleId
+  const roleId = req.user.roleId;
 
   if (!Object.keys(data).length) {
     return res.status(400).json({
@@ -112,8 +141,9 @@ const edit = (req, res) => {
 
 const remove = (req, res) => {
   const accommodationId = req.params.id;
-  const roleId = req.user.roleId
+  const roleId = req.user.roleId;
   const userId = req.user.id;
+  
   accommodationControllers
     .removeAccommodation(accommodationId, roleId, userId)
     .then((response) => {
@@ -128,12 +158,12 @@ const remove = (req, res) => {
     });
 };
 
-
-
 module.exports = {
   getAll,
   getById,
   create,
   edit,
   remove,
+  getAllMine,
+  getAllByUserId,
 };

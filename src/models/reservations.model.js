@@ -31,11 +31,11 @@ const Reservations = db.define("reservations", {
   accommodationId: {
     allowNull: false,
     type: DataTypes.UUID,
-    field: "accommodation_id",
     references: {
       model: Accommodations,
       key: "id",
     },
+    field: "accommodation_id"
   },
   adults: {
     allowNull: false,

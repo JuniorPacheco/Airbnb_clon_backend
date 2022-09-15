@@ -12,8 +12,16 @@ const initModels = () => {
   Users.belongsTo(Roles);
 
   //? NaN
-  Users.belongsToMany(Accommodations, { through: Reservations, foreignKey: "user_id"});
-  Accommodations.belongsToMany(Users, { through: Reservations, foreignKey: "accommodation_id"});
+  // Users.belongsToMany(Accommodations, { through: Reservations, foreignKey: "user_id"});
+  // Accommodations.belongsToMany(Users, { through: Reservations, foreignKey: "accommodation_id"});
+
+  //? 1aN
+  Users.hasMany(Reservations)
+  Reservations.belongsTo(Users)
+
+  //? 1aN
+  Accommodations.hasMany(Reservations)
+  Reservations.belongsTo(Accommodations)
 
   //? 1aN
   Places.hasMany(Accommodations, {foreignKey: "place_id", sourceKey: "id"});

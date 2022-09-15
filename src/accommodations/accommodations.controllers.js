@@ -26,6 +26,54 @@ const getAllAccommodations = async () => {
   return data;
 };
 
+const getAllMyAccommodations = async (userId) => {
+  const data = await Accommodations.findAll({
+    where: {
+      hostId: userId,
+    },
+    include: [
+      {
+        model: Places,
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      },
+      {
+        model: Users,
+        as: "user",
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "password"],
+        },
+      },
+    ],
+  });
+  return data;
+};
+
+const getAllAcommodationsByUserId = async (userId) => {
+  const data = await Accommodations.findAll({
+    where: {
+      hostId: userId,
+    },
+    include: [
+      {
+        model: Places,
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      },
+      {
+        model: Users,
+        as: "user",
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "password"],
+        },
+      },
+    ],
+  });
+  return data;
+};
+
 const getAccommodationById = async (id) => {
   const data = await Accommodations.findOne({
     where: {
@@ -53,11 +101,12 @@ const getAccommodationById = async (id) => {
   return data;
 };
 
-const createAccommodation = async (data, hostId) => {
+const createAccommodation = async (data, hostId, placeId) => {
   const newAccommodation = await Accommodations.create({
     ...data,
     id: uuid.v4(),
     hostId,
+    placeId,
   });
   //?Retorna un arreglo con un número 0 erroneo y 1 si es valido
   return newAccommodation;
@@ -75,7 +124,7 @@ const editAccommodation = async (data, accommodationId, userId, roleId) => {
     const { id, hostId, score, ...restOfData } = data;
     const response = await Accommodations.update(
       { ...restOfData },
-      { where: { id: accommodationId} }
+      { where: { id: accommodationId } }
     );
     return response;
   }
@@ -96,7 +145,7 @@ const editAccommodation = async (data, accommodationId, userId, roleId) => {
 const removeAccommodation = async (accommodationId, roleId, userId) => {
   const dataRoles = await Roles.findAll({ where: { name: ["admin", "host"] } });
   const rolesObeject = {};
-  
+
   dataRoles.forEach((role) => {
     rolesObeject[role.dataValues.name] = role.dataValues.id;
   });
@@ -122,4 +171,6 @@ module.exports = {
   editAccommodation,
   removeAccommodation,
   createAccommodation,
+  getAllMyAccommodations,
+  getAllAcommodationsByUserId,
 };
