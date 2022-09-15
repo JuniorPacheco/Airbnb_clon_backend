@@ -1,4 +1,4 @@
-# Ruta base del deply de la base de datos https://junior-airbnb-clone-api-gen14.onrender.com/
+# Ruta base del deploy de la base de datos https://junior-airbnb-clone-api-gen14.onrender.com/
 # Rutas
 
 - /api/v1/users
