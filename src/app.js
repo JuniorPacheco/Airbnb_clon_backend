@@ -28,7 +28,7 @@ db.authenticate()
 
 db.sync({ force: false })
   .then(() => {
-    generateData();
+    // generateData();
   })
   .catch((err) => console.log(err));
 
